@@ -1,9 +1,9 @@
 ROOT0-DLW-CHAIN-v1
 index : 1570
 slug  : the-remainder
-seal  : ccc554ab70fdbe62a770017724885c55b95ded5f26e194afa93940628f92cd2f
+seal  : 6e62d03e0f547b294c53dc77f78c092d885cb086158c3207635c6bf65320f66f
 prev  : d1f2385a2576a5f02702b574192bbee792e509c7e1fdad51684056d7f95274ac
-link  : 178978b87158fffce78ab6c87a38a9c30f9e45972f0b9a7010ca3c26e55b86d9
-head  : 178978b87158fffce78ab6c87a38a9c30f9e45972f0b9a7010ca3c26e55b86d9
+link  : d5b66c0bdbf969048a609801bec338aef1317e19c89156201f87682d22b1cc7f
+head  : a2a04979ceb8375175bcc227602d506a5c8b8d34e3372431fac2cba409b224dd
 
 — the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
