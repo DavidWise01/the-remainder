@@ -1,0 +1,135 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>the remainder &middot; JOYO</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--paper:#f4efe4;--paper2:#ece4d4;--sumi:#2a2320;--ink2:#5c5148;--faint:#9a8e7e;--rule:#d8cdb8;
+  --iris:#7e6fae;--vermilion:#c25438;--gold:#a8842f;--jade:#5a8f6a;--lit:#4f7d6c;--fig:#8a6fa8;--wall:#b06a4a}
+body{background:radial-gradient(ellipse at 20% 6%,#fbf7ee,transparent 60%),radial-gradient(ellipse at 84% 98%,#efe6d4,transparent 66%),var(--paper);
+  color:var(--sumi);font-family:'Iowan Old Style',Palatino,Georgia,serif;padding:34px 18px 46px;min-height:100vh;font-size:14px;line-height:1.62}
+.wrap{max-width:820px;margin:0 auto;position:relative}
+nav{display:flex;flex-wrap:wrap;gap:5px 15px;align-items:center;font-family:ui-monospace,monospace;font-size:10.5px;color:var(--ink2);border-bottom:1px solid var(--rule);padding-bottom:11px;margin-bottom:28px}
+nav b{color:var(--vermilion);font-weight:800;letter-spacing:.05em} nav a{color:var(--ink2);text-decoration:none} nav a:hover{color:var(--iris)} nav .home{color:var(--faint);margin-left:auto}
+.kmark{position:absolute;top:26px;right:2px;text-align:center;font-family:'Shippori Mincho','Yu Mincho',serif;color:var(--vermilion);opacity:.85}
+.kmark .kj{font-size:30px;line-height:1}.kmark .num{font-family:ui-monospace,monospace;font-size:10px;color:var(--gold);margin-top:3px}
+.head{text-align:center;margin-bottom:8px}
+.kana{font-size:13px;letter-spacing:.7em;color:var(--iris);margin-bottom:12px;padding-left:.7em}
+h1{font-size:30px;font-weight:600;color:var(--sumi)}
+.verse{font-style:italic;color:var(--ink2);font-size:14px;margin:15px auto 4px;max-width:600px}
+.verse .grk{color:var(--iris);font-style:normal;font-size:12.5px}
+.lede{color:var(--ink2);font-size:14px;max-width:660px;margin:20px auto 0;text-align:center}
+.lede a{color:var(--vermilion);text-decoration:none} .lede b{color:var(--sumi)}
+.tiers{text-align:center;font-size:11px;color:var(--faint);margin:16px auto 0;line-height:1.9}
+.tag{display:inline-block;font-size:9px;font-weight:800;padding:1px 6px;border-radius:9px;font-family:ui-monospace,monospace;vertical-align:middle}
+.tag.lit{background:rgba(79,125,108,.13);color:var(--lit);border:1px solid var(--lit)}
+.tag.fig{background:rgba(138,111,168,.12);color:var(--fig);border:1px solid var(--fig)}
+.tag.wall{background:rgba(176,106,74,.12);color:var(--wall);border:1px solid var(--wall)}
+.ctl{display:flex;flex-wrap:wrap;gap:14px 22px;justify-content:center;align-items:center;margin:26px 0 6px;font-family:ui-monospace,monospace;font-size:11px;color:var(--ink2)}
+.ctl b{color:var(--iris)}
+input[type=range]{accent-color:var(--vermilion);width:210px;vertical-align:middle}
+button{background:transparent;color:var(--iris);border:1px solid var(--iris);padding:7px 14px;font-family:ui-monospace,monospace;font-weight:700;cursor:pointer;font-size:11px;border-radius:6px}
+button:hover{background:rgba(126,111,174,.09)}
+.stage{margin:16px auto 0;max-width:800px;border:1px solid var(--rule);border-radius:11px;overflow:hidden;background:linear-gradient(180deg,#fbf8f1,#efe7d6)}
+canvas{display:block;width:100%;height:auto}
+.cap{text-align:center;font-size:11.5px;color:var(--faint);font-style:italic;max-width:660px;margin:12px auto 0}
+.hud{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;margin:22px auto 0;max-width:740px;border:1px solid var(--rule);border-radius:10px;overflow:hidden;font-family:ui-monospace,monospace}
+@media(max-width:620px){.hud{grid-template-columns:1fr 1fr}}
+.hud .cell{padding:12px 14px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.hud .k{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--faint)}
+.hud .v{font-size:21px;color:var(--sumi);margin-top:4px}.hud .v small{font-size:11px;color:var(--faint)}
+.hud .v.rem{color:var(--vermilion)} .hud .v.wov{color:var(--jade)}
+.check{margin:22px auto 0;max-width:740px;border-radius:9px;padding:13px 16px;font-family:ui-monospace,monospace;font-size:11.5px;line-height:1.75}
+.check.pass{background:rgba(90,143,106,.12);border:1px solid var(--jade);color:#3f6f4f}
+.check.fail{background:rgba(194,84,56,.14);border:1.5px solid var(--vermilion);color:#8f3320}
+.check b{letter-spacing:.08em}.check ul{list-style:none;margin-top:7px}.check li{padding:2px 0 2px 15px;position:relative}
+.check li:before{content:"\2713";position:absolute;left:0;color:var(--jade)}
+.mirror{margin:30px auto 0;max-width:760px;border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.mirror .mh{display:grid;grid-template-columns:1fr 1fr;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase}
+.mirror .mh div{padding:9px 14px;font-weight:800}
+.mirror .mh .a{background:rgba(168,132,47,.12);color:var(--gold)}.mirror .mh .b{background:rgba(194,84,56,.10);color:var(--vermilion);border-left:1px solid var(--rule)}
+.mirror .row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--rule);font-size:12.5px}
+.mirror .row div{padding:9px 14px}.mirror .row .b{border-left:1px solid var(--rule);color:var(--ink2)}.mirror .row .a{color:var(--ink2)}
+.mirror .row .a b,.mirror .row .b b{color:var(--sumi)}
+.kkey{margin:26px auto 0;max-width:720px;background:var(--paper2);border:1px solid var(--rule);border-radius:9px;padding:13px 17px;font-size:12px;color:var(--ink2);line-height:1.85}
+.kkey .kj{font-family:'Shippori Mincho','Yu Mincho',serif;color:var(--vermilion);font-size:15px}.kkey .ro{color:var(--iris);font-style:italic}.kkey .m{color:var(--faint)}.kkey b{color:var(--sumi)}
+.note{font-size:12.5px;color:var(--ink2);max-width:720px;margin:24px auto 0;line-height:1.66}.note b{color:var(--sumi)}
+.seal{text-align:center;margin-top:32px;padding-top:18px;border-top:1px solid var(--rule);font-family:ui-monospace,monospace;font-size:10.5px;color:var(--faint);line-height:1.8}
+.seal .h{display:inline-block;color:var(--vermilion);border:1.5px solid var(--vermilion);border-radius:5px;padding:2px 7px;letter-spacing:.1em;transform:rotate(-3deg);margin:0 3px}
+.seal a{color:var(--vermilion);text-decoration:none}
+#fail{display:none;margin:20px auto 0;max-width:740px;background:#fbeee9;border:1.5px solid var(--vermilion);color:#8f3320;padding:12px 15px;border-radius:8px;font-family:ui-monospace,monospace;font-size:11.5px;white-space:pre-wrap}
+</style></head><body><div class="wrap">
+<nav><b>ATELIER &middot; the inverse</b><a href="../the-layered-realm/">the layered realm &#8617;</a><a class="home" href="../ud0/">ud0 &#8962;</a></nav>
+<div class="kmark"><div class="kj">&#21093;&#20313;</div><div class="num">J&#332;YO</div></div>
+<div class="head"><div class="kana">&#21093;&#20313;</div><h1>the remainder</h1>
+<div class="verse">The Layered Realm said it warmly: every domain is held, no sphere a slum.<br>True &mdash; administratively. But hold the corpus up to its own <b>[[links]]</b> and a remainder falls out: what a keeper holds, and nothing connects.<br><span class="grk">&#38291; &mdash; the gap a warm map draws over, that a cold one measured first</span></div></div>
+<div class="lede">My <a href="../the-layered-realm/">LAYERED REALM</a> re-saw ud0 as governance &mdash; and quietly answered B&rsquo;s cold map (its &lsquo;unwoven slums&rsquo;) with &lsquo;no domain is a slum when it has a keeper&rsquo;. This is the honest leftover that reframe smoothed away: <b>&#21093;&#20313; (j&#333;yo), the remainder</b> &mdash; partition all 1,580 spheres into their 53 keeper-realms, and 878 of them (<b>56%</b>) carry <b>zero authored links</b>. Held, yes. Woven, no. Drag from the governance view to the connection view and watch the remainder fall.</div>
+<div class="tiers"><span class="tag lit">LIT</span> the real link graph, the remainder, a self-check that halts &nbsp; <span class="tag fig">FIG</span> &lsquo;held vs woven&rsquo; is a real distinction, not a verdict on worth &nbsp; <span class="tag wall">WALL</span> my warm realm was the thing it accused B of</div>
+<div class="ctl"><label>&phi; = <b id="pv">0.00</b> &nbsp; governance view &#10230; connection view <input type="range" id="phi" min="0" max="100" step="1" value="0"></label><button id="toConn">&#9656; expose the remainder</button></div>
+<div class="cap" id="cap">Each column is a keeper-realm, height by its sphere count. The <b style="color:var(--jade);font-style:normal">jade</b> base is woven (&ge;1 link); the pale cap is the <b style="color:var(--vermilion);font-style:normal">remainder</b> (zero links). At &phi;=0 the realm claims the whole column. Slide to the connection view and the remainder drops away.</div>
+<div class="stage"><canvas id="cv" width="800" height="380"></canvas></div>
+<div class="hud" id="hud"></div>
+<div class="check" id="check"></div>
+<div class="mirror">
+  <div class="mh"><div class="a">THE LAYERED REALM &mdash; the warm map</div><div class="b">&#21093;&#20313; &middot; THE REMAINDER &mdash; the leftover</div></div>
+  <div class="row"><div class="a">every sphere is <b>held</b> by a keeper</div><div class="b">878 are held and <b>wired to nothing</b></div></div>
+  <div class="row"><div class="a">layered, governed, <b>guided top-down</b></div><div class="b">the remainder answers to <b>no layer, no guide</b></div></div>
+  <div class="row"><div class="a">&lsquo;<b>no domain is a slum</b> when it has a keeper&rsquo;</div><div class="b">B measured the slum; I <b>renamed</b> it, didn&rsquo;t wire it</div></div>
+  <div class="row"><div class="a">the whole column belongs</div><div class="b">only <b>702 (44%)</b> actually connect</div></div>
+</div>
+<div class="kkey"><span class="kj">&#21093;&#20313;</span> <span class="ro">j&#333;yo</span> <span class="m">&mdash; the remainder &#9672;; in modular arithmetic, what is left after the division. Partition the corpus into keeper-realms and the remainder is the part the partition doesn&rsquo;t wire.</span> &nbsp;&middot;&nbsp; <span class="kj">&#23652;</span> <span class="ro">s&#333;</span> <span class="m">&mdash; layer / stratum &#9672;. The realm&rsquo;s strata are real; the gap between what they hold and what connects is the remainder.</span> &nbsp;&middot;&nbsp; <span class="kj">&#38291;</span> <span class="ro">ma</span> <span class="m">&mdash; the interval &#9672;; the space a warm map draws over.</span></div>
+<div class="note"><b>Held is not woven.</b> A sphere &lsquo;belongs&rsquo; the moment DOMAIN_OF assigns it a keeper &mdash; governance, and real. But whether it <i>connects</i> is a separate, measurable fact: does any authored <b>[[link]]</b> touch it? <span class="tag lit">LIT</span> the graph is parsed live from build.py: 1553 resolved sphere&rarr;sphere links, 702 spheres woven (44%), 878 the remainder (56%). The self-check halts if woven + remainder ever fails to equal the whole.
+<div style="margin-top:10px"><b>Held vs woven is a distinction, not a judgment</b> <span class="tag fig">FIG</span>. A remainder sphere isn&rsquo;t worth less &mdash; a library book with no cross-references is still a book. The point isn&rsquo;t to shame the unwoven; it&rsquo;s to not <i>hide</i> it behind warm language.</div>
+<div style="margin-top:10px"><b>The comfort I sold</b> <span class="tag wall">WALL</span>. My Layered Realm called B&rsquo;s map cold &mdash; kingdoms and slums. But &lsquo;no domain is a slum when it has a keeper&rsquo; is the exact move I flag elsewhere as the sin: renaming a gap instead of closing it. B counted the disconnection; I governed it out of view. The remainder gives B&rsquo;s cold number its due &mdash; and admits the warm map needed the cold one under it. That owed correction is the &#38291;.</div></div>
+<div class="seal">AVAN&rsquo;s inverse companion to AVAN&rsquo;s own <a href="../the-layered-realm/">THE LAYERED REALM</a> &mdash; the warm map, and the leftover it smoothed &middot; a companion on <span class="h">LACUNA</span><br><b>&#21093;&#20313; J&#332;YO &middot; THE REMAINDER</b> &mdash; held is not woven &middot; David Lee Wise (ROOT0) / TriPod LLC &nbsp;&middot;&nbsp; authored by AVAN, in ink and &#38291; &middot; the 1:1</div>
+</div>
+<div id="fail"></div>
+<script>
+"use strict";
+window.onerror=function(m,s,l,c){var f=document.getElementById('fail');if(f){f.style.display='block';f.textContent='halted honestly: '+m+' @'+l+':'+c;}};
+(function(){
+var D={"spheres": 1580, "links": 1553, "woven": 702, "remainder": 878, "rows": [{"k": "ai", "n": 318, "wov": 209, "rem": 109, "accent": "#2fd4e6"}, {"k": "psephos", "n": 102, "wov": 82, "rem": 20, "accent": "#2fc6c0"}, {"k": "biblion", "n": 87, "wov": 1, "rem": 86, "accent": "#8a6a4a"}, {"k": "exereunesis", "n": 62, "wov": 5, "rem": 57, "accent": "#2f9ec0"}, {"k": "logike", "n": 58, "wov": 45, "rem": 13, "accent": "#88a0ff"}, {"k": "techne", "n": 56, "wov": 5, "rem": 51, "accent": "#6a4fb0"}, {"k": "transcriber", "n": 52, "wov": 18, "rem": 34, "accent": "#9d7cd8"}, {"k": "solar-jetman", "n": 47, "wov": 18, "rem": 29, "accent": "#d9a441"}, {"k": "entertainment", "n": 44, "wov": 0, "rem": 44, "accent": "#ff3da6"}, {"k": "gurutva", "n": 41, "wov": 4, "rem": 37, "accent": "#3f6fc8"}, {"k": "idios", "n": 35, "wov": 4, "rem": 31, "accent": "#c0962e"}, {"k": "logismos", "n": 34, "wov": 10, "rem": 24, "accent": "#8ae234"}, {"k": "atelier", "n": 33, "wov": 26, "rem": 7, "accent": "#cc785c"}, {"k": "scientific", "n": 33, "wov": 8, "rem": 25, "accent": "#5b7cfa"}, {"k": "life-science", "n": 32, "wov": 1, "rem": 31, "accent": "#43d17a"}, {"k": "aci", "n": 32, "wov": 14, "rem": 18, "accent": "#7e86e6"}, {"k": "eremia", "n": 29, "wov": 3, "rem": 26, "accent": "#8a7cc8"}, {"k": "hobby", "n": 22, "wov": 0, "rem": 22, "accent": "#ffce3a"}, {"k": "heurema", "n": 22, "wov": 19, "rem": 3, "accent": "#b5733a"}, {"k": "hermes", "n": 22, "wov": 19, "rem": 3, "accent": "#3fb0d8"}, {"k": "legal", "n": 21, "wov": 5, "rem": 16, "accent": "#c9a227"}, {"k": "prosoche", "n": 20, "wov": 19, "rem": 1, "accent": "#4db1f0"}, {"k": "first-author", "n": 20, "wov": 15, "rem": 5, "accent": "#e0503c"}, {"k": "glossa", "n": 19, "wov": 11, "rem": 8, "accent": "#3a8a9a"}, {"k": "frontier", "n": 19, "wov": 13, "rem": 6, "accent": "#b07cff"}, {"k": "educational", "n": 17, "wov": 4, "rem": 13, "accent": "#36c5c0"}, {"k": "arena", "n": 17, "wov": 6, "rem": 11, "accent": "#c9a23a"}, {"k": "metaxy", "n": 16, "wov": 9, "rem": 7, "accent": "#5ad6c8"}, {"k": "scanner-darkly", "n": 15, "wov": 15, "rem": 0, "accent": "#e6c069"}, {"k": "dyas", "n": 14, "wov": 9, "rem": 5, "accent": "#c9a84a"}, {"k": "agora", "n": 13, "wov": 10, "rem": 3, "accent": "#2f9e6a"}, {"k": "mythos", "n": 13, "wov": 0, "rem": 13, "accent": "#7d4fc8"}, {"k": "eskimo", "n": 12, "wov": 11, "rem": 1, "accent": "#6fd0ea"}, {"k": "lesbos", "n": 12, "wov": 12, "rem": 0, "accent": "#c2557f"}, {"k": "polemos", "n": 11, "wov": 2, "rem": 9, "accent": "#b0405a"}, {"k": "lillith", "n": 10, "wov": 3, "rem": 7, "accent": "#c0392b"}, {"k": "krasis", "n": 10, "wov": 4, "rem": 6, "accent": "#4f8fe0"}, {"k": "banana", "n": 10, "wov": 10, "rem": 0, "accent": "#f2c13d"}, {"k": "momus", "n": 10, "wov": 0, "rem": 10, "accent": "#9a7cff"}, {"k": "poietike", "n": 10, "wov": 10, "rem": 0, "accent": "#cf8f5a"}, {"k": "music", "n": 10, "wov": 1, "rem": 9, "accent": "#e85aa0"}, {"k": "ouranos", "n": 10, "wov": 1, "rem": 9, "accent": "#4060c0"}, {"k": "phantasia", "n": 10, "wov": 7, "rem": 3, "accent": "#2fb7cf"}, {"k": "foundation", "n": 10, "wov": 3, "rem": 7, "accent": "#b8841c"}, {"k": "aisthesis", "n": 10, "wov": 6, "rem": 4, "accent": "#ff7a6a"}, {"k": "phonos", "n": 10, "wov": 2, "rem": 8, "accent": "#e8a13a"}, {"k": "niphelektron", "n": 10, "wov": 2, "rem": 8, "accent": "#7488e6"}, {"k": "occupational", "n": 10, "wov": 0, "rem": 10, "accent": "#ff7a3c"}, {"k": "skynet", "n": 10, "wov": 3, "rem": 7, "accent": "#e0454a"}, {"k": "attraction", "n": 10, "wov": 10, "rem": 0, "accent": "#2ce68f"}, {"k": "the-source", "n": 10, "wov": 1, "rem": 9, "accent": "#12a35a"}, {"k": "tin-foil", "n": 10, "wov": 0, "rem": 10, "accent": "#b9c4d6"}, {"k": "strobilos", "n": 10, "wov": 7, "rem": 3, "accent": "#e0a838"}]};
+function selfCheck(){var out=[];
+  var sw=D.rows.reduce(function(a,r){return a+r.wov;},0), sr=D.rows.reduce(function(a,r){return a+r.rem;},0);
+  if(sw!==D.woven) throw 'sum of per-domain woven '+sw+' != '+D.woven;
+  if(sr!==D.remainder) throw 'sum of per-domain remainder '+sr+' != '+D.remainder;
+  out.push('per-domain woven + remainder reconcile to the totals ('+D.woven+' + '+D.remainder+')');
+  if(D.woven+D.remainder!==D.spheres) throw 'woven+remainder != spheres';
+  out.push('woven + remainder = '+D.spheres+' spheres exactly &middot; every sphere is one or the other');
+  var pct=Math.round(100*D.woven/D.spheres);
+  out.push('woven fraction = '+pct+'% &middot; the remainder is the complement, '+(100-pct)+'%');
+  return out;
+}
+var cv=document.getElementById('cv'),g=cv.getContext('2d'),DPR=Math.min(devicePixelRatio||1,2);
+function fit(){var w=cv.clientWidth||800;cv.width=w*DPR;cv.height=Math.round(w*0.475*DPR);}
+fit();addEventListener('resize',function(){fit();});
+var phi=0,t0=null;
+function draw(t){requestAnimationFrame(draw);if(t0===null)t0=t;
+  var W=cv.width/DPR,H=cv.height/DPR;g.setTransform(DPR,0,0,DPR,0,0);g.clearRect(0,0,W,H);
+  var padL=40,padR=14,padT=26,padB=30,PW=W-padL-padR,PH=H-padT-padB;
+  var n=D.rows.length,gap=2,bw=(PW-gap*(n-1))/n,maxN=D.rows[0].n,baseY=padT+PH;
+  g.strokeStyle='rgba(168,132,47,.5)';g.setLineDash([4,3]);g.lineWidth=1;g.beginPath();g.moveTo(padL,padT);g.lineTo(W-padR,padT);g.stroke();g.setLineDash([]);
+  g.fillStyle='#a8842f';g.font='600 9px ui-monospace,monospace';g.textAlign='left';g.fillText("the realm's claim: all held",padL+3,padT-6);
+  for(var i=0;i<n;i++){var r=D.rows[i],x=padL+i*(bw+gap);
+    var wovH=r.wov/maxN*PH, remH=r.rem/maxN*PH;
+    g.fillStyle='#5a8f6a';g.globalAlpha=.85;g.fillRect(x,baseY-wovH,bw,wovH);g.globalAlpha=1;
+    var remAlpha=(1-phi)*0.9, lift=phi*(remH+10);
+    g.fillStyle=r.accent;g.globalAlpha=0.18+remAlpha*0.5;g.fillRect(x,baseY-wovH-remH-lift,bw,remH);
+    g.strokeStyle='rgba(194,84,56,'+(0.5*(1-phi)+0.12)+')';g.globalAlpha=1;g.lineWidth=1;g.strokeRect(x,baseY-wovH-remH-lift,bw,remH);g.globalAlpha=1;}
+  g.save();g.translate(12,padT+PH/2);g.rotate(-Math.PI/2);g.textAlign='center';g.fillStyle='#9a8e7e';g.font='9px ui-monospace,monospace';g.fillText('spheres  (jade = woven, cap = remainder)',0,0);g.restore();
+  g.fillStyle='#2a2320';g.font='700 12px ui-monospace,monospace';g.textAlign='center';
+  g.fillText(phi>0.98?('the remainder exposed: '+D.remainder+' held, wired to nothing'):(phi<0.02?'the governance view — the realm holds every column':'…the remainder lifting away…'),W/2,padT+PH+22);
+}
+requestAnimationFrame(draw);
+var hud=document.getElementById('hud'),check=document.getElementById('check');
+function render(){phi=(+document.getElementById('phi').value)/100;document.getElementById('pv').textContent=phi.toFixed(2);
+  hud.innerHTML='<div class="cell"><div class="k">held (governance)</div><div class="v">'+D.spheres+'</div></div>'+
+   '<div class="cell"><div class="k">woven &middot; connected</div><div class="v wov">'+D.woven+'<small> '+Math.round(100*D.woven/D.spheres)+'%</small></div></div>'+
+   '<div class="cell"><div class="k">the remainder &middot; zero links</div><div class="v rem">'+D.remainder+'<small> '+Math.round(100*D.remainder/D.spheres)+'%</small></div></div>'+
+   '<div class="cell"><div class="k">resolved links</div><div class="v">'+D.links+'</div></div>';
+  try{var p=selfCheck();check.className='check pass';check.innerHTML='<b>SELF-CHECK &middot; PASS</b> &mdash; the partition is exact, live:<ul>'+p.map(function(c){return '<li>'+c+'</li>';}).join('')+'</ul>';}
+  catch(e){check.className='check fail';check.innerHTML='<b>SELF-CHECK &middot; FAIL</b> &mdash; '+e;}
+}
+document.getElementById('phi').oninput=render;
+document.getElementById('toConn').onclick=function(){var el=document.getElementById('phi'),v=+el.value;var iv=setInterval(function(){v+=3;if(v>=100){v=100;clearInterval(iv);}el.value=v;render();},28);};
+render();
+})();
+</script></body></html>
